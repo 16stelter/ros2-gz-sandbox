@@ -4,12 +4,11 @@
   <!-- Parameters -->
   <xacro:property name="mass" value="1.0"/>
   <xacro:property name="arm_length" value="0.25"/>
-  <xacro:property name="link_prefix" value = "drone/" />
   <xacro:arg name="robot_ns" default=""/>
   <xacro:property name="robot_ns" value="$(arg robot_ns)"/>
 
   <!-- Base body -->
-  <link name="${link_prefix}base_link">
+  <link name="base_link">
     <inertial>
       <mass value="${mass}"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -58,7 +57,7 @@
     </link>
 
     <joint name="${name}_joint" type="continuous">
-      <parent link="${link_prefix}base_link"/>
+      <parent link="base_link"/>
       <child link="${name}"/>
       <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
@@ -67,13 +66,13 @@
   </xacro:macro>
 
   <!-- 4 rotors (alternating spin direction) -->
-  <xacro:rotor name="${link_prefix}rotor_fl" x="${arm_length}"  y="${arm_length}" />
-  <xacro:rotor name="${link_prefix}rotor_fr" x="${arm_length}"  y="-${arm_length}"/>
-  <xacro:rotor name="${link_prefix}rotor_rl" x="-${arm_length}" y="${arm_length}" />
-  <xacro:rotor name="${link_prefix}rotor_rr" x="-${arm_length}" y="-${arm_length}"/>
+  <xacro:rotor name="rotor_fl" x="${arm_length}"  y="${arm_length}" />
+  <xacro:rotor name="rotor_fr" x="${arm_length}"  y="-${arm_length}"/>
+  <xacro:rotor name="rotor_rl" x="-${arm_length}" y="${arm_length}" />
+  <xacro:rotor name="rotor_rr" x="-${arm_length}" y="-${arm_length}"/>
 
   <!-- IMU -->
-  <gazebo reference="${link_prefix}base_link">
+  <gazebo reference="base_link">
     <sensor type="imu" name="imu_sensor">
       <update_rate>100</update_rate>
       <always_on>1</always_on>
@@ -85,8 +84,8 @@
   <gazebo>
     <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
       <robotNamespace>${robot_ns}</robotNamespace>
-      <jointName>${link_prefix}rotor_fl_joint</jointName>
-      <linkName>${link_prefix}rotor_fl</linkName>
+      <jointName>rotor_fl_joint</jointName>
+      <linkName>rotor_fl</linkName>
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
@@ -102,8 +101,8 @@
     </plugin>
     <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
       <robotNamespace>${robot_ns}</robotNamespace>
-      <jointName>${link_prefix}rotor_fr_joint</jointName>
-      <linkName>${link_prefix}rotor_fr</linkName>
+      <jointName>rotor_fr_joint</jointName>
+      <linkName>rotor_fr</linkName>
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
@@ -119,8 +118,8 @@
     </plugin>
     <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
       <robotNamespace>${robot_ns}</robotNamespace>
-      <jointName>${link_prefix}rotor_rl_joint</jointName>
-      <linkName>${link_prefix}rotor_rl</linkName>
+      <jointName>rotor_rl_joint</jointName>
+      <linkName>rotor_rl</linkName>
       <turningDirection>cw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
@@ -136,8 +135,8 @@
     </plugin>
     <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
       <robotNamespace>${robot_ns}</robotNamespace>
-      <jointName>${link_prefix}rotor_rr_joint</jointName>
-      <linkName>${link_prefix}rotor_rr</linkName>
+      <jointName>rotor_rr_joint</jointName>
+      <linkName>rotor_rr</linkName>
       <turningDirection>ccw</turningDirection>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>
@@ -156,7 +155,7 @@
         <robotNamespace>${robot_ns}</robotNamespace>
         <commandSubTopic>cmd_vel</commandSubTopic>
         <enableSubTopic>velocity_controller/enable</enableSubTopic>
-        <comLinkName>${link_prefix}base_link</comLinkName>
+        <comLinkName>base_link</comLinkName>
         <velocityGain>3.3 3.3 3.5</velocityGain>
         <attitudeGain>5.0 5.0 0.9</attitudeGain>
         <angularRateGain>1.5 1.5 0.09</angularRateGain>
@@ -169,25 +168,25 @@
         <angularVelocityNoiseStdDev>0.0 0.0 0.0</angularVelocityNoiseStdDev>
         <rotorConfiguration>
           <rotor>
-            <jointName>${link_prefix}rotor_fl_joint</jointName>
+            <jointName>rotor_fl_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>1</direction>
           </rotor>
           <rotor>
-            <jointName>${link_prefix}rotor_fr_joint</jointName>
+            <jointName>rotor_fr_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>-1</direction>
           </rotor>
           <rotor>
-            <jointName>${link_prefix}rotor_rl_joint</jointName>
+            <jointName>rotor_rl_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>-1</direction>
           </rotor>
           <rotor>
-            <jointName>${link_prefix}rotor_rr_joint</jointName>
+            <jointName>rotor_rr_joint</jointName>
             <forceConstant>8.54858e-06</forceConstant>
             <momentConstant>0.016</momentConstant>
             <direction>1</direction>
@@ -198,8 +197,9 @@
         <update_frequency>10</update_frequency>
         <odom_topic>${robot_ns}/true_pose</odom_topic>
         <odom_frame>odom</odom_frame>
-        <robot_base_frame>${link_prefix}base_link</robot_base_frame>
-        <tf_topic>tf</tf_topic>
+        <dimensions>3</dimensions>
+        <robot_base_frame>base_link</robot_base_frame>
+        <tf_topic>${robot_ns}/tf</tf_topic>
     </plugin>
   </gazebo>
 </robot>

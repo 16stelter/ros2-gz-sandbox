@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cube_bot">
+
+  <xacro:property name="cube_size" value="0.5"/>
+  <xacro:property name="wheel_radius" value="0.08"/>
+  <xacro:property name="wheel_width" value="0.04"/>
+  <xacro:property name="link_prefix" value="cube/"/>
+  <xacro:property name="mast_height" value="0.6"/>
+
+  <link name="${link_prefix}base_link">
+    <visual>
+      <geometry>
+        <box size="${cube_size} ${cube_size} ${cube_size}"/>
+      </geometry>
+      <material name="cube_color">
+        <color rgba="0.0 0.0 0.9 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${cube_size} ${cube_size} ${cube_size}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10.0"/>
+      <inertia ixx="0.2" ixy="0.0" ixz="0.0" iyy="0.2" iyz="0.0" izz="0.2"/>
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="name x y side">
+    <link name="${name}_link">
+      <visual>
+        <origin rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="1.0"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${link_prefix}base_link"/>
+      <child link="${name}_link"/>
+      <origin
+        xyz="${x} ${y + side * (cube_size/2 + wheel_width/2)} ${-cube_size/2 + wheel_radius}"/>
+      <axis xyz="1 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel name="${link_prefix}front_left_wheel"
+               x="${ cube_size/2}"
+               y="${ 0}"
+               side="1"/>
+
+  <xacro:wheel name="${link_prefix}rear_left_wheel"
+               x="${-cube_size/2}"
+               y="${ 0}"
+               side="1"/>
+
+  <xacro:wheel name="${link_prefix}front_right_wheel"
+               x="${ cube_size/2}"
+               y="${ 0}"
+               side="-1"/>
+
+  <xacro:wheel name="${link_prefix}rear_right_wheel"
+               x="${-cube_size/2}"
+               y="${ 0}"
+               side="-1"/>
+
+  <link name="${link_prefix}mast_link">
+    <visual>
+      <origin xyz="0 0 ${mast_height/2}"/>
+      <geometry>
+        <cylinder radius="0.03" length="${mast_height}"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${mast_height/2}"/>
+      <geometry>
+        <cylinder radius="0.03" length="${mast_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <joint name="mast_joint" type="fixed">
+    <parent link="${link_prefix}base_link"/>
+    <child link="${link_prefix}mast_link"/>
+    <origin xyz="0 0 ${cube_size/2}"/>
+  </joint>
+
+  <link name="${link_prefix}camera_link"/>
+  <link name="${link_prefix}lidar_link"/>
+
+<joint name="camera_joint" type="fixed">
+  <parent link="${link_prefix}mast_link"/>
+  <child link="${link_prefix}camera_link"/>
+  <origin xyz="0.02 0 ${mast_height}" rpy="0 0 1.5708"/>
+</joint>
+
+
+<joint name="lidar_joint" type="fixed">
+  <parent link="${link_prefix}mast_link"/>
+  <child link="${link_prefix}lidar_link"/>
+  <origin xyz="0.02 0 ${mast_height}" rpy="0 0 1.5708"/>
+</joint>
+
+  <gazebo reference="${link_prefix}camera_link">
+    <sensor name="camera" type="camera">
+      <camera name="cube_camera">
+        <horizontal_fov>1.9</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.2</near>
+          <far>300</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>30</update_rate>
+      <visualize>true</visualize>
+      <topic>${link_prefix}camera/image_raw</topic>
+      <gz_frame_id>${link_prefix}camera_link</gz_frame_id>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="${link_prefix}lidar_link">
+    <sensor name="lidar_link" type="gpu_lidar">
+    <pose>0 0 0 0 0 0</pose>
+      <topic>${link_prefix}pointcloud</topic>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>640</samples>
+            <min_angle>-1.396263</min_angle>
+            <max_angle>1.396263</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>32</samples>
+            <min_angle>-1.39</min_angle>
+            <max_angle>1.39</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>1.0</min>
+          <max>10.0</max>
+        </range>
+      </ray>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <gz_frame_id>${link_prefix}lidar_link</gz_frame_id>
+    </sensor>
+  </gazebo>
+
+</robot>

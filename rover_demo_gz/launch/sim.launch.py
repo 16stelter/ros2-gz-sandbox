@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     package_path = get_package_share_directory("rover_demo_gz")
 
-    world_name = DeclareLaunchArgument("world_name", default_value="walls", description="Name of the world to load")
+    world_name = DeclareLaunchArgument("world_name", default_value="mars1", description="Name of the world to load")
 
     robot_x = DeclareLaunchArgument("robot_x", default_value="0.0", description="X position of the first robot")
     robot_y = DeclareLaunchArgument("robot_y", default_value="0.0", description="Y position of the first robot")
