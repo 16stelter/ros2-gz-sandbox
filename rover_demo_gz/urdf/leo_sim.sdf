@@ -1,4 +1,4 @@
-<sdf version='1.11'>
+<sdf version='1.9'>
   <model name='leo_sim'>
     <link name='base_footprint'>
       <inertial>
@@ -948,11 +948,7 @@
         </inertia>
       </inertial>
     </link>
-    <plugin name='leo_gz::DifferentialSystem' filename='libleo_gz_differential_plugin.so'>
-      <jointA>rocker_L_joint</jointA>
-      <jointB>rocker_R_joint</jointB>
-      <forceConstant>100.0</forceConstant>
-    </plugin>
+
     <plugin name='ignition::gazebo::systems::JointStatePublisher' filename='ignition-gazebo-joint-state-publisher-system'>
       <topic>joint_states</topic>
     </plugin>

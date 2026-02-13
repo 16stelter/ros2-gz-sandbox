@@ -9,7 +9,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
+    pkg_ros_gazebo_sim = get_package_share_directory("ros_ign_gazebo")
     package_path = get_package_share_directory("rover_demo_gz")
 
     world_name = DeclareLaunchArgument("world_name", default_value="mars1", description="Name of the world to load")
@@ -32,9 +32,9 @@ def generate_launch_description():
 
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ros_gazebo_sim, "launch", "gz_sim.launch.py")
+            os.path.join(pkg_ros_gazebo_sim, "launch", "ign_gazebo.launch.py")
         ),
-        launch_arguments={"gz_args": LaunchConfiguration("sim_world")}.items(),
+        launch_arguments={"ign_args": LaunchConfiguration("sim_world")}.items(),
     )
 
     spawn_leo = IncludeLaunchDescription(
@@ -62,14 +62,14 @@ def generate_launch_description():
 
     # Bridge ROS topics and Gazebo messages for establishing communication
     topic_bridge = Node(
-        package="ros_gz_bridge",
+        package="ros_ign_bridge",
         executable="parameter_bridge",
         name="ros_bridge",
         arguments=[
-            ["/world/", LaunchConfiguration("world_name"), "/control@ros_gz_interfaces/srv/ControlWorld"],
-            ["/world/", LaunchConfiguration("world_name"), "/create@ros_gz_interfaces/srv/SpawnEntity"],
-            ["/world/", LaunchConfiguration("world_name"), "/remove@ros_gz_interfaces/srv/DeleteEntity"],
-            ["/world/", LaunchConfiguration("world_name"), "/set_pose@ros_gz_interfaces/srv/SetEntityPose"],
+            ["/world/", LaunchConfiguration("world_name"), "/control@ros_ign_interfaces/srv/ControlWorld"],
+            ["/world/", LaunchConfiguration("world_name"), "/create@ros_ign_interfaces/srv/SpawnEntity"],
+            ["/world/", LaunchConfiguration("world_name"), "/remove@ros_ign_interfaces/srv/DeleteEntity"],
+            ["/world/", LaunchConfiguration("world_name"), "/set_pose@ros_ign_interfaces/srv/SetEntityPose"],
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
         ],
         parameters=[
