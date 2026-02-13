@@ -4,7 +4,6 @@
   <xacro:macro name="leo" 
                params="default_antenna:=true
                        rockers_fixed:=true
-                       footprint_link:=true
                        imu_translation:='0.0628 -0.0314 -0.0393'
                        mecanum_wheels:=false">
     <xacro:macro name="rocker_link" params="name">
@@ -95,9 +94,6 @@
     </xacro:macro>
 
     <!-- LINKS -->
-    <xacro:if value="${footprint_link}">
-      <link name="base_footprint"/>
-    </xacro:if>
 
     <link name="base_link">
       <pose>0 0 0.19783 0 0 0</pose>
@@ -167,15 +163,6 @@
 
 
     <!-- JOINTS -->
-
-    <xacro:if value="${footprint_link}">
-      <joint name="base_joint" type="fixed">
-        <origin xyz="0 0 0.19783" rpy="0 0 0"/>
-        <parent link="base_footprint"/>
-        <child link="base_link"/>
-      </joint>
-    </xacro:if>
-
     <xacro:if value="${rockers_fixed}">
       <xacro:property name="rockers_joint_type" value="fixed"/>
     </xacro:if>
@@ -286,7 +273,7 @@
 
     <joint name="imu_joint" type="fixed">
       <origin xyz="${imu_translation}" rpy="0 0 0"/>
-      <parent link="base_footprint"/>
+      <parent link="base_link"/>
       <child link="imu_frame"/>
     </joint>
   </xacro:macro>
@@ -297,7 +284,7 @@
                params="robot_ns:=''">
 
     <!-- base ODE properties -->
-    <gazebo reference="base_footprint">
+    <gazebo reference="base_link">
       <collision>
         <surface>
           <friction>
@@ -557,7 +544,7 @@
         <wheel_separation>0.358</wheel_separation>
         <wheel_radius>0.0625</wheel_radius>
         <frame_id>odom</frame_id>
-        <child_frame_id>base_footprint</child_frame_id>
+        <child_frame_id>base_link</child_frame_id>
         <odom_publish_frequency>20</odom_publish_frequency>
         <topic>${robot_ns}/cmd_vel</topic>
         <max_linear_acceleration>2.5</max_linear_acceleration>
@@ -569,8 +556,8 @@
         <update_frequency>10</update_frequency>
         <odom_topic>${robot_ns}/true_pose</odom_topic>
         <odom_frame>odom</odom_frame>
-        <dimensions>3</dimensions>
-        <robot_base_frame>base_footprint</robot_base_frame>
+        <dimensions>2</dimensions>
+        <robot_base_frame>base_link</robot_base_frame>
         <tf_topic>${robot_ns}/tf</tf_topic>
       </plugin>
     </gazebo>
@@ -592,7 +579,7 @@
       <link name="odom"/>
       <joint name="fixed" type="fixed">
         <parent link="odom"/>
-        <child link="base_footprint"/>
+        <child link="base_link"/>
         <origin xyz="0.0 0.0 1.0"/>
       </joint>
     </xacro:if>

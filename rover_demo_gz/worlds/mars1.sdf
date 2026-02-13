@@ -46,7 +46,7 @@
         <collision name="collision">
             <geometry>
             <mesh>
-                <uri>model://trekSTL.stl</uri>
+                <uri>model://mars1.stl</uri>
             </mesh>
             </geometry>
         </collision>
@@ -54,7 +54,7 @@
         <visual name="visual">	
             <geometry>
                 <mesh>
-                    <uri>model://trekSTL.stl</uri>
+                    <uri>model://mars1.stl</uri>
                 </mesh>
             </geometry>
             <material>

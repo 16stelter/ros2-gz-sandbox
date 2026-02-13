@@ -197,7 +197,7 @@
         <update_frequency>10</update_frequency>
         <odom_topic>${robot_ns}/true_pose</odom_topic>
         <odom_frame>odom</odom_frame>
-        <dimensions>3</dimensions>
+        <dimensions>2</dimensions>
         <robot_base_frame>base_link</robot_base_frame>
         <tf_topic>${robot_ns}/tf</tf_topic>
     </plugin>

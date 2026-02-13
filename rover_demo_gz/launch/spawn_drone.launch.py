@@ -102,7 +102,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         namespace="",
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        name=node_name_prefix + "parameter_bridge",
+        name=node_name_prefix + "_parameter_bridge",
         arguments=[
             robot_ns + "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",

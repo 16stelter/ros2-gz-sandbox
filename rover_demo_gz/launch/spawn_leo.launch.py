@@ -102,7 +102,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         namespace="",
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        name=node_name_prefix + "parameter_bridge",
+        name=node_name_prefix + "_parameter_bridge",
         arguments=[
             robot_ns + "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
@@ -127,10 +127,11 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         namespace="",
         package="ros_gz_image",
         executable="image_bridge",
-        name=node_name_prefix + "image_bridge",
+        name=node_name_prefix + "_image_bridge",
         arguments=[robot_ns + "/camera/image_raw"],
         output="screen",
     )
+
     return [
         robot_state_publisher,
         joint_state_publisher,
