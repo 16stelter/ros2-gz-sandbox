@@ -254,7 +254,7 @@
     </xacro:if>
 
     <joint name="lidar_joint" type="fixed">
-      <origin xyz="0.0971 0 -0.0427" rpy="0 0.2094 0"/>
+      <origin xyz="0.0971 0 -0.0427" rpy="0 0.7 0"/>
       <parent link="base_link"/>
       <child link="lidar_frame"/>
     </joint>
@@ -479,7 +479,7 @@
         <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
         <topic>${robot_ns}/pointcloud</topic>
         <update_rate>10</update_rate>
-        <ray>
+        <lidar>
           <scan>
             <horizontal>
               <samples>640</samples>
@@ -495,26 +495,25 @@
             </vertical>
           </scan>
           <range>
-            <min>1.0</min>
-            <max>10.0</max>
+            <min>0.5</min>
+            <max>2.0</max>
             <resolution>0.01</resolution>
           </range>
-        </ray>
+        </lidar>
         <always_on>true</always_on>
         <visualize>true</visualize>
         <gz_frame_id>lidar_frame</gz_frame_id>
       </sensor>
+      <plugin name="lidar_plugin" filename="libgazebo_ros_laser.so">
+        <ros>
+          <namespace>${robot_ns}</namespace>
+          <parameter name="frame_id" value="lidar_frame"/>
+          <topic>pointcloud</topic>
+        </ros>
+      </plugin>
     </gazebo>
 
     <!-- rocker differential -->
-    
-    <gazebo>
-      <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
-        <jointA>rocker_L_joint</jointA>
-        <jointB>rocker_R_joint</jointB>
-        <forceConstant>100.0</forceConstant>
-      </plugin>
-    </gazebo>
 
     <gazebo>
       <plugin
@@ -556,7 +555,7 @@
         <update_frequency>10</update_frequency>
         <odom_topic>${robot_ns}/true_pose</odom_topic>
         <odom_frame>odom</odom_frame>
-        <dimensions>2</dimensions>
+        <dimensions>3</dimensions>
         <robot_base_frame>base_link</robot_base_frame>
         <tf_topic>${robot_ns}/tf</tf_topic>
       </plugin>

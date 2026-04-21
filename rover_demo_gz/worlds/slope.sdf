@@ -38,7 +38,7 @@
             <direction>-0.5 0.1 -0.9</direction>
         </light>
         <model name="mars">
-        <pose>-50.0 -50.0 -2.0 0.0 0.0 0.0 </pose>
+        <pose>-4.0 -4.0 -0.5 0.0 0.0 0.0 </pose>
         <static>true</static>
 
         <link name="mars_terrain">
@@ -46,7 +46,8 @@
         <collision name="collision">
             <geometry>
             <mesh>
-                <uri>model://size60_1.stl</uri>
+                <uri>model://terrain_test.stl</uri>
+                <scale>100 100 100</scale>
             </mesh>
             </geometry>
         </collision>
@@ -54,7 +55,8 @@
         <visual name="visual">	
             <geometry>
                 <mesh>
-                    <uri>model://size60_1.stl</uri>
+                    <uri>model://terrain_test.stl</uri>
+                    <scale>100 100 100</scale>
                 </mesh>
             </geometry>
             <material>

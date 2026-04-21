@@ -38,16 +38,16 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         os.path.join(
             pkg_project_description,
             "urdf",
-            "drone.urdf.xacro",
+            "multimodal.urdf.xacro",
         ),
         mappings={"robot_ns": robot_ns},
     )
 
     if robot_ns == "":
-        robot_gazebo_name = "drone"
+        robot_gazebo_name = "multimodal"
         node_name_prefix = ""
     else:
-        robot_gazebo_name = "drone_" + robot_ns
+        robot_gazebo_name = "multimodal_" + robot_ns
         node_name_prefix = robot_ns
 
     # Launch robot state publisher node
@@ -104,7 +104,9 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         executable="parameter_bridge",
         name=node_name_prefix + "_parameter_bridge",
         arguments=[
-            robot_ns + "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
+            robot_ns + "/cmd_vel_air@geometry_msgs/msg/Twist]gz.msgs.Twist",
+            robot_ns + "/cmd_vel_ground@geometry_msgs/msg/Twist]gz.msgs.Twist",
+            robot_ns + "/velocity_controller/enable]gz.msgs.Boolean",
             #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/true_pose@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
