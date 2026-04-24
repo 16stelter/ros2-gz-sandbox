@@ -59,7 +59,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Chassis_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Chassis_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -93,7 +93,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Chassis.dae</uri>
+            <uri>model://leo_description/models/leo/Chassis.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -102,7 +102,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Antenna.dae</uri>
+            <uri>model://leo_description/models/leo/Antenna.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -208,7 +208,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Rocker_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Rocker_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -233,7 +233,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Rocker.dae</uri>
+            <uri>model://leo_description/models/leo/Rocker.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -333,7 +333,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Wheel_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Wheel_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -361,7 +361,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/WheelA.dae</uri>
+            <uri>model://leo_description/models/leo/WheelA.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -461,7 +461,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Wheel_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Wheel_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -489,7 +489,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/WheelA.dae</uri>
+            <uri>model://leo_description/models/leo/WheelA.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -538,7 +538,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Rocker_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Rocker_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -563,7 +563,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Rocker.dae</uri>
+            <uri>model://leo_description/models/leo/Rocker.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -663,7 +663,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Wheel_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Wheel_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -691,7 +691,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/WheelB.dae</uri>
+            <uri>model://leo_description/models/leo/WheelB.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -791,7 +791,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/Wheel_outline.stl</uri>
+            <uri>model://leo_description/models/leo/Wheel_outline.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -819,7 +819,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://rover_demo_gz/models/leo/WheelB.dae</uri>
+            <uri>model://leo_description/models/leo/WheelB.dae</uri>
           </mesh>
         </geometry>
       </visual>

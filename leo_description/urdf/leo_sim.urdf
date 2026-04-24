@@ -23,13 +23,13 @@
     <visual>
       <pose frame="">0 0 0 0 -0 0</pose>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Chassis.dae"/>
+        <mesh filename="package://leo_description/models/Chassis.dae"/>
       </geometry>
     </visual>
     <collision>
       <pose frame="">0 0 0 0 -0 0</pose>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Chassis_outline.stl"/>
+        <mesh filename="package://leo_description/models/Chassis_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -41,12 +41,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Rocker.dae"/>
+        <mesh filename="package://leo_description/models/Rocker.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Rocker_outline.stl"/>
+        <mesh filename="package://leo_description/models/Rocker_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -58,12 +58,12 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Rocker.dae"/>
+        <mesh filename="package://leo_description/models/Rocker.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Rocker_outline.stl"/>
+        <mesh filename="package://leo_description/models/Rocker_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -75,7 +75,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/WheelA.dae"/>
+        <mesh filename="package://leo_description/models/WheelA.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -92,7 +92,7 @@
     </collision>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Wheel_outline.stl"/>
+        <mesh filename="package://leo_description/models/Wheel_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -104,7 +104,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/WheelA.dae"/>
+        <mesh filename="package://leo_description/models/WheelA.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -121,7 +121,7 @@
     </collision>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Wheel_outline.stl"/>
+        <mesh filename="package://leo_description/models/Wheel_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -133,7 +133,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/WheelB.dae"/>
+        <mesh filename="package://leo_description/models/WheelB.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -150,7 +150,7 @@
     </collision>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Wheel_outline.stl"/>
+        <mesh filename="package://leo_description/models/Wheel_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -162,7 +162,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/WheelB.dae"/>
+        <mesh filename="package://leo_description/models/WheelB.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -179,7 +179,7 @@
     </collision>
     <collision>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Wheel_outline.stl"/>
+        <mesh filename="package://leo_description/models/Wheel_outline.stl"/>
       </geometry>
     </collision>
   </link>
@@ -191,7 +191,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://rover_demo_gz/models/leo/Antenna.dae"/>
+        <mesh filename="package://leo_description/models/Antenna.dae"/>
       </geometry>
     </visual>
     <collision>

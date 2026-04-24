@@ -6,7 +6,7 @@
   <xacro:arg name="robot_ns" default=""/>
   <xacro:arg name="mecanum_wheels" default="false"/>
 
-  <xacro:include filename="$(find rover_demo_gz)/urdf/macros.xacro"/>
+  <xacro:include filename="$(find leo_description)/urdf/macros.xacro"/>
 
   <xacro:leo_sim robot_ns="$(arg robot_ns)"
                  fixed="$(arg fixed)"

@@ -18,12 +18,12 @@
         </inertial>
         <visual>
           <geometry>
-            <mesh filename="package://leo/Rocker.dae"/>
+            <mesh filename="package://Rocker.dae"/>
           </geometry>
         </visual>
         <collision>
           <geometry>
-            <mesh filename="package://leo/Rocker_outline.stl"/>
+            <mesh filename="package://Rocker_outline.stl"/>
           </geometry>
         </collision>
       </link>
@@ -41,7 +41,7 @@
         </inertial>
         <visual>
           <geometry>
-            <mesh filename="package://leo/Wheel${model}.dae"/>
+            <mesh filename="package://Wheel${model}.dae"/>
           </geometry>
         </visual>
         <collision>
@@ -58,7 +58,7 @@
         </collision>
         <collision>
           <geometry>
-            <mesh filename="package://leo/Wheel_outline.stl"/>
+            <mesh filename="package://Wheel_outline.stl"/>
           </geometry>
         </collision>
       </link>
@@ -76,7 +76,7 @@
         </inertial>
         <visual>
           <geometry>
-            <mesh filename="package://leo/WheelMecanum${model}.dae"/>
+            <mesh filename="package://WheelMecanum${model}.dae"/>
           </geometry>
         </visual>
         <collision>
@@ -87,7 +87,7 @@
         </collision>
         <collision>
           <geometry>
-            <mesh filename="package://leo/Mecanum_wheel_outline.stl"/>
+            <mesh filename="package://Mecanum_wheel_outline.stl"/>
           </geometry>
         </collision>
       </link>
@@ -107,12 +107,12 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://leo/Chassis.dae"/>
+          <mesh filename="package://Chassis.dae"/>
         </geometry>
       </visual>
       <collision>
         <geometry>
-          <mesh filename="package://leo/Chassis_outline.stl"/>
+          <mesh filename="package://Chassis_outline.stl"/>
         </geometry>
       </collision>
     </link>
@@ -144,7 +144,7 @@
         </inertial>
         <visual>
           <geometry>
-            <mesh filename="package://leo/Antenna.dae"/>
+            <mesh filename="package://Antenna.dae"/>
           </geometry>
         </visual>
         <collision>

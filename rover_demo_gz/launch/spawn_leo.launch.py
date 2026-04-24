@@ -31,7 +31,7 @@ import xacro
 
 
 def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z):
-    pkg_project_description = get_package_share_directory("rover_demo_gz")
+    pkg_project_description = get_package_share_directory("leo_description")
     robot_ns = context.perform_substitution(namespace)
 
     robot_desc = xacro.process(
