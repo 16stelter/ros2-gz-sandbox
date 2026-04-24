@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<robot>
+    <!-- ros_control plugin -->
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find go2_description)/config/ros_control/ros_control.yaml</parameters>
+            <ros>
+                <namespace>go2</namespace>
+            </ros>
+        </plugin>
+    </gazebo>
+
+    <ros2_control name="go2" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <!-- Front Left -->
+        <joint name="FL_hip_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="FL_thigh_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="FL_calf_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <!-- Front Right -->
+        <joint name="FR_hip_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="FR_thigh_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="FR_calf_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        
+        <!-- Rear Left-->
+        <joint name="RL_hip_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="RL_thigh_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="RL_calf_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <!-- Rear Right -->
+        <joint name="RR_hip_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="RR_thigh_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="RR_calf_joint">
+            <command_interface name="effort"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+
+
+    <!-- Show the trajectory of trunk center. -->
+    <!--gazebo>
+        <plugin name="3dplot" filename="libLinkPlot3DPlugin.so">
+            <frequency>10</frequency>
+            <plot>
+                <link>base</link>
+                <pose>0 0 0 0 0 0</pose>
+                <material>Gazebo/Yellow</material>
+            </plot>
+        </plugin>
+    </gazebo-->
+
+    <gazebo reference="imu_link">
+        <gravity>true</gravity>
+
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>1000</update_rate>
+            <visualize>true</visualize>
+            <topic>trunk_imu</topic>
+            <gz_frame_id>imu_link</gz_frame_id>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
+    <!-- Foot contacts. -->
+    <gazebo reference="FR_calf">
+        <sensor name="FR_foot_contact" type="contact">
+        <update_rate>100</update_rate>
+        <contact>
+            <collision>FR_calf_fixed_joint_lump__FR_foot_collision_1</collision>
+        </contact>
+        </sensor>
+    </gazebo>
+    <gazebo reference="FL_calf">
+        <sensor name="FL_foot_contact" type="contact">
+        <update_rate>100</update_rate>
+        <contact>
+            <collision>FL_calf_fixed_joint_lump__FL_foot_collision_1</collision>
+        </contact>
+        </sensor>
+    </gazebo>
+    <gazebo reference="RR_calf">
+        <sensor name="RR_foot_contact" type="contact">
+        <update_rate>100</update_rate>
+        <contact>
+            <collision>RR_calf_fixed_joint_lump__RR_foot_collision_1</collision>
+        </contact>
+        </sensor>
+    </gazebo>
+    <gazebo reference="RL_calf">
+        <sensor name="RL_foot_contact" type="contact">
+        <update_rate>100</update_rate>
+        <contact>
+            <collision>RL_calf_fixed_joint_lump__RL_foot_collision_1</collision>
+        </contact>
+        </sensor>
+    </gazebo>
+
+    <gazebo reference="base">
+        <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+
+    <gazebo reference="trunk">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+
+    <gazebo reference="stick_link">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+
+    <gazebo reference="imu_link">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+
+    <!-- FL leg -->
+    <gazebo reference="FL_hip">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+
+    </gazebo>
+    <gazebo reference="FL_thigh">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+    <gazebo reference="FL_calf">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+    </gazebo>
+    <gazebo reference="FL_foot">
+        <mu1>0.6</mu1>
+        <mu2>0.6</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+
+    <!-- FR leg -->
+    <gazebo reference="FR_hip">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="FR_thigh">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+    <gazebo reference="FR_calf">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+    </gazebo>
+    <gazebo reference="FR_foot">
+        <mu1>0.6</mu1>
+        <mu2>0.6</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+
+    <!-- RL leg -->
+    <gazebo reference="RL_hip">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="RL_thigh">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+    <gazebo reference="RL_calf">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+    </gazebo>
+    <gazebo reference="RL_foot">
+        <mu1>0.6</mu1>
+        <mu2>0.6</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+
+    <!-- RR leg -->
+    <gazebo reference="RR_hip">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="RR_thigh">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+    <gazebo reference="RR_calf">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>1</self_collide>
+    </gazebo>
+    <gazebo reference="RR_foot">
+        <mu1>0.6</mu1>
+        <mu2>0.6</mu2>
+        <self_collide>1</self_collide>
+        <kp  value="1000000.0"/>
+        <kd  value="1.0"/>
+    </gazebo>
+
+</robot>

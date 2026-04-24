@@ -60,6 +60,18 @@ def generate_launch_description():
         }.items(),
     )
 
+    spawn_go2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_go2.launch.py")
+        ),
+        launch_arguments={
+            "robot_ns": "go2",
+            "x": PythonExpression([LaunchConfiguration("robot_x"), " - 1.0"]),
+            "y": PythonExpression([LaunchConfiguration("robot_y"), " - 1.0"]),
+            "z": LaunchConfiguration("robot_z"),
+        }.items(),
+    )
+
     # Bridge ROS topics and Gazebo messages for establishing communication
     topic_bridge = Node(
         package="ros_gz_bridge",
@@ -91,6 +103,7 @@ def generate_launch_description():
             gz_sim,
             spawn_leo,
             spawn_drone,
+            spawn_go2,
             topic_bridge,
         ]
     )

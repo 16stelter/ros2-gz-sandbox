@@ -41,7 +41,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(package_path, "launch", "spawn_leo.launch.py")
         ),
-        launch_arguments={"robot_ns": "",
+        launch_arguments={"robot_ns": LaunchConfiguration("robot_ns"),
                           "x": LaunchConfiguration("robot_x"),
                           "y": LaunchConfiguration("robot_y"),
                           "z": LaunchConfiguration("robot_z"),
