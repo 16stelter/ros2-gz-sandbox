@@ -1,30 +1,32 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.launch_context import LaunchContext
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterFile
 import xacro
 
 
 def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z):
     robot_ns = context.perform_substitution(namespace)
 
-    config_pkg_share = get_package_share_directory("go2_config")
     descr_pkg_share = get_package_share_directory("go2_description")
 
-    joints_config = os.path.join(config_pkg_share, "config/joints/joints.yaml")
-    gait_config = os.path.join(config_pkg_share, "config/gait/gait.yaml")
-    links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
+    joints_config = os.path.join(descr_pkg_share, "config/champ/joints.yaml")
+    gait_config = os.path.join(descr_pkg_share, "config/champ/gait.yaml")
+    links_config = os.path.join(descr_pkg_share, "config/champ/links.yaml")
+
+    urdf_path = os.path.join(descr_pkg_share, "xacro", "robot_VLP.xacro")
+    links_param = ParameterFile(param_file=links_config, allow_substs=True)
+    joints_param = ParameterFile(param_file=joints_config, allow_substs=True) 
+    gait_param = ParameterFile(param_file=gait_config, allow_substs=True) 
 
     robot_desc = xacro.process(
-        os.path.join(
-            descr_pkg_share,
-            "xacro",
-            "robot_VLP.xacro",
-        ),
+        urdf_path,
         mappings={"robot_ns": robot_ns},
     )
 
@@ -101,17 +103,41 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         ],
         output="screen",
     )
+    
+    quadruped_controller_node = Node(
+        namespace=robot_ns,
+        package="champ_base",
+        executable="quadruped_controller_node",
+        output="screen",
+        parameters=[
+            {"use_sim_time": True},
+            {"gazebo": True},
+            {"publish_joint_states": False},
+            {"publish_foot_contacts": False},
+            {"publish_joint_control": True},
+            {"joint_controller_topic": "joint_trajectory"},
+            {"robot_desc": robot_desc},
+            links_param,
+            joints_param,
+            gait_param
+        ],
+        remappings=[
+            ("/cmd_vel/smooth", "/cmd_vel"),
+        ],
+    )
+
 
     return [
         robot_state_publisher,
         joint_state_publisher,
+        quadruped_controller_node,
         go2,
         topic_bridge
     ]
 
 
 def generate_launch_description():
-    config_pkg_share = get_package_share_directory("go2_config")
+    config_pkg_share = get_package_share_directory("go2_description")
 
     ros_control_config = os.path.join(
         config_pkg_share, "config/ros_control/ros_control.yaml"  

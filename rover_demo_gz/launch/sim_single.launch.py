@@ -1,16 +1,19 @@
 import os
 from ament_index_python import get_package_share_directory
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.launch_description import LaunchDescription
+from launch.conditions import IfCondition
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     package_path = get_package_share_directory("rover_demo_gz")
+
+    type = DeclareLaunchArgument("type", default_value="leo", description="Type of robot to be loaded. Valid types: ['leo', 'drone', 'go2', 'multimodal']")
+    robot_ns = DeclareLaunchArgument("robot_ns", default_value="", description="Robot namespace")
 
     world_name = DeclareLaunchArgument("world_name", default_value="slope", description="Name of the world to load")
 
@@ -22,12 +25,6 @@ def generate_launch_description():
         "sim_world",
         default_value=[package_path, "/worlds/", LaunchConfiguration("world_name"), ".sdf"],
         description="Path to the Gazebo world file",
-    )
-
-    robot_ns = DeclareLaunchArgument(
-        "robot_ns",
-        default_value="",
-        description="Robot namespace",
     )
 
     gz_sim = IncludeLaunchDescription(
@@ -46,6 +43,43 @@ def generate_launch_description():
                           "y": LaunchConfiguration("robot_y"),
                           "z": LaunchConfiguration("robot_z"),
                           }.items(),
+        condition=IfCondition(PythonExpression(["'", LaunchConfiguration("type"), "' == 'leo'"]))
+    )
+
+    spawn_drone = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_drone.launch.py")
+        ),
+        launch_arguments={"robot_ns": LaunchConfiguration("robot_ns"),
+                          "x": LaunchConfiguration("robot_x"),
+                          "y": LaunchConfiguration("robot_y"),
+                          "z": LaunchConfiguration("robot_z"),
+                          }.items(),
+        condition=IfCondition(PythonExpression(["'", LaunchConfiguration("type"), "' == 'drone'"]))
+    )
+
+    spawn_go2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_go2.launch.py")
+        ),
+        launch_arguments={"robot_ns": LaunchConfiguration("robot_ns"),
+                          "x": LaunchConfiguration("robot_x"),
+                          "y": LaunchConfiguration("robot_y"),
+                          "z": LaunchConfiguration("robot_z"),
+                          }.items(),
+        condition=IfCondition(PythonExpression(["'", LaunchConfiguration("type"), "' == 'go2'"]))
+    )
+
+    spawn_multimodal = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_path, "launch", "spawn_multimodal.launch.py")
+        ),
+        launch_arguments={"robot_ns": LaunchConfiguration("robot_ns"),
+                          "x": LaunchConfiguration("robot_x"),
+                          "y": LaunchConfiguration("robot_y"),
+                          "z": LaunchConfiguration("robot_z"),
+                          }.items(),
+        condition=IfCondition(PythonExpression(["'", LaunchConfiguration("type"), "' == 'multimodal'"]))
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -73,11 +107,15 @@ def generate_launch_description():
             world_name,
             sim_world,
             robot_ns,
+            type,
             robot_x,
             robot_y,
             robot_z,
             gz_sim,
             spawn_leo,
+            spawn_drone,
+            spawn_go2,
+            spawn_multimodal,
             topic_bridge,
         ]
     )

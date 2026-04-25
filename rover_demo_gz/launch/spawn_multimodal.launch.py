@@ -77,7 +77,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     )
 
     # Spawn a robot inside a simulation
-    leo_rover = Node(
+    robot = Node(
         namespace=robot_ns,
         package="ros_gz_sim",
         executable="create",
@@ -106,7 +106,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         arguments=[
             robot_ns + "/cmd_vel_air@geometry_msgs/msg/Twist]gz.msgs.Twist",
             robot_ns + "/cmd_vel_ground@geometry_msgs/msg/Twist]gz.msgs.Twist",
-            robot_ns + "/velocity_controller/enable]gz.msgs.Boolean",
+            robot_ns + "/velocity_controller/enable@std_msgs/msg/Bool]gz.msgs.Boolean",
             #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/true_pose@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
@@ -136,7 +136,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     return [
         robot_state_publisher,
         joint_state_publisher,
-        leo_rover,
+        robot,
         topic_bridge,
         image_bridge
     ]
