@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
-    package_path = get_package_share_directory("rover_demo_gz")
+    package_path = get_package_share_directory("ros2_gt_playground")
 
     world_name = DeclareLaunchArgument("world_name", default_value="mars1", description="Name of the world to load")
 

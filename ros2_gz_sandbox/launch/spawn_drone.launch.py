@@ -31,23 +31,23 @@ import xacro
 
 
 def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z):
-    pkg_project_description = get_package_share_directory("rover_demo_gz")
+    pkg_project_description = get_package_share_directory("ros2_gz_sandbox")
     robot_ns = context.perform_substitution(namespace)
 
     robot_desc = xacro.process(
         os.path.join(
             pkg_project_description,
             "urdf",
-            "multimodal.urdf.xacro",
+            "drone.urdf.xacro",
         ),
         mappings={"robot_ns": robot_ns},
     )
 
     if robot_ns == "":
-        robot_gazebo_name = "multimodal"
+        robot_gazebo_name = "drone"
         node_name_prefix = ""
     else:
-        robot_gazebo_name = "multimodal_" + robot_ns
+        robot_gazebo_name = "drone_" + robot_ns
         node_name_prefix = robot_ns
 
     # Launch robot state publisher node
@@ -77,7 +77,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     )
 
     # Spawn a robot inside a simulation
-    robot = Node(
+    leo_rover = Node(
         namespace=robot_ns,
         package="ros_gz_sim",
         executable="create",
@@ -104,9 +104,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         executable="parameter_bridge",
         name=node_name_prefix + "_parameter_bridge",
         arguments=[
-            robot_ns + "/cmd_vel_air@geometry_msgs/msg/Twist]gz.msgs.Twist",
-            robot_ns + "/cmd_vel_ground@geometry_msgs/msg/Twist]gz.msgs.Twist",
-            robot_ns + "/velocity_controller/enable@std_msgs/msg/Bool]gz.msgs.Boolean",
+            robot_ns + "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/true_pose@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             robot_ns + "/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
@@ -136,7 +134,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     return [
         robot_state_publisher,
         joint_state_publisher,
-        robot,
+        leo_rover,
         topic_bridge,
         image_bridge
     ]

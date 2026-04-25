@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
-    package_path = get_package_share_directory("rover_demo_gz")
+    package_path = get_package_share_directory("ros2_gz_sandbox")
 
     type = DeclareLaunchArgument("type", default_value="leo", description="Type of robot to be loaded. Valid types: ['leo', 'drone', 'go2', 'multimodal']")
     robot_ns = DeclareLaunchArgument("robot_ns", default_value="", description="Robot namespace")
