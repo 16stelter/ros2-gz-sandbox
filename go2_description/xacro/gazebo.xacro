@@ -1,11 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="1.0"?> 
 <robot>
     <!-- ros_control plugin -->
     <gazebo>
         <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>$(find go2_description)/config/ros_control/ros_control.yaml</parameters>
             <ros>
-                <namespace>go2</namespace>
+                <namespace>$(arg robot_ns)</namespace>
             </ros>
         </plugin>
     </gazebo>

@@ -11,6 +11,9 @@
   <depend>urdf</depend>
   <depend>std_msgs</depend>
   <depend>gazebo_msgs</depend>
+  <depend>go2_description</depend>
+  <depend>leo_description</depend>
+  <depend>champ_base</depend>
   
 
   <export>
