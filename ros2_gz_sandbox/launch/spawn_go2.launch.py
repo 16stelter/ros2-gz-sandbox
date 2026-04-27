@@ -1,7 +1,7 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, TimerAction, ExecuteProcess
 from launch.launch_context import LaunchContext
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
@@ -20,10 +20,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     gait_config = os.path.join(descr_pkg_share, "config/champ/gait.yaml")
     links_config = os.path.join(descr_pkg_share, "config/champ/links.yaml")
 
-    urdf_path = os.path.join(descr_pkg_share, "xacro", "robot_VLP.xacro")
-    links_param = ParameterFile(param_file=links_config, allow_substs=True)
-    joints_param = ParameterFile(param_file=joints_config, allow_substs=True) 
-    gait_param = ParameterFile(param_file=gait_config, allow_substs=True) 
+    urdf_path = os.path.join(descr_pkg_share, "urdf", "unitree_go2_robot.xacro")
 
     robot_desc = xacro.process(
         urdf_path,
@@ -44,18 +41,6 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="both",
-        parameters=[
-            {"use_sim_time": True},
-            {"robot_description": robot_desc},
-        ],
-        remappings=[("/tf", "tf"), ("/tf_static", "tf_static")],
-    )
-
-    joint_state_publisher = Node(
-        namespace=robot_ns,
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
         parameters=[
             {"use_sim_time": True},
             {"robot_description": robot_desc},
@@ -84,55 +69,124 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         ],
     )
 
-    # Bridge ROS topics and Gazebo messages for establishing communication
     topic_bridge = Node(
         namespace="",
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
         name=node_name_prefix + "_parameter_bridge",
+        output='screen',
         arguments=[
-            robot_ns + "/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
-            #robot_ns + "/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry",
-            robot_ns + "/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
-            robot_ns + "/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model",
+            # Gazebo to ROS
+            '/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU',
+            '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            '/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model',
+            '/velodyne_points/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            '/unitree_lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            # '/velodyne_points@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+            '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+            '/rgb_image@sensor_msgs/msg/Image@gz.msgs.Image',
+            # D455 RGBD camera bridges
+            '/d455/image@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/d455/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/d455/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
+            '/d455/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+
+            # ROS to Gazebo
+            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+            '/joint_group_position_controller/joint_trajectory@trajectory_msgs/msg/JointTrajectory]gz.msgs.JointTrajectory',
         ],
         parameters=[
             {
                 "qos_overrides./tf_static.publisher.durability": "transient_local",
+                "use_sim_time": True,
             }
         ],
-        output="screen",
     )
-    
+
     quadruped_controller_node = Node(
-        namespace=robot_ns,
         package="champ_base",
         executable="quadruped_controller_node",
         output="screen",
         parameters=[
             {"use_sim_time": True},
             {"gazebo": True},
-            {"publish_joint_states": False},
-            {"publish_foot_contacts": False},
+            {"publish_joint_states": True},
             {"publish_joint_control": True},
-            {"joint_controller_topic": "joint_trajectory"},
+            {"publish_foot_contacts": False},
+            {"joint_controller_topic": "joint_group_position_controller/joint_trajectory"},
             {"robot_desc": robot_desc},
-            links_param,
-            joints_param,
-            gait_param
+            joints_config,
+            links_config,
+            gait_config,
+            {"hardware_connected": False},
+            {"publish_foot_contacts": False},
+            {"close_loop_odom": True},
         ],
-        remappings=[
-            ("/cmd_vel/smooth", "/cmd_vel"),
+        remappings=[("/cmd_vel/smooth", "/cmd_vel")],
+    )
+
+    state_estimator_node = Node(
+        package="champ_base",
+        executable="state_estimation_node",
+        output="screen",
+        parameters=[
+            {"use_sim_time": True},
+            {"orientation_from_imu": True},
+            {"urdf": robot_desc},
+            joints_config,
+            links_config,
+            gait_config,
         ],
     )
 
+    controller_spawner_js = TimerAction(
+        period=20.0,
+        actions=[
+            Node(
+                package="controller_manager",
+                executable="spawner",
+                output="screen",
+                arguments=[
+                    "--controller-manager-timeout", "120",
+                    "joint_states_controller",  # No --inactive flag to ensure full activation
+                ],
+                parameters=[{"use_sim_time": True}],
+            )
+        ]
+    )
+
+    controller_spawner_position = TimerAction(
+        period=30.0,
+        actions=[
+            Node(
+                package="controller_manager",
+                executable="spawner",
+                output="screen",
+                arguments=[
+                    "--controller-manager-timeout", "120",
+                    "joint_group_position_controller",  # No --inactive flag to ensure full activation
+                ],
+                parameters=[{"use_sim_time": True}],
+            )
+        ]
+    )
+
+    rviz2 = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', os.path.join(descr_pkg_share, "rviz/rviz.rviz")],
+    )
 
     return [
         robot_state_publisher,
-        joint_state_publisher,
-        quadruped_controller_node,
         go2,
-        topic_bridge
+        topic_bridge,
+        quadruped_controller_node,
+        state_estimator_node,
+        controller_spawner_js,
+        controller_spawner_position,
+        rviz2,
     ]
 
 
