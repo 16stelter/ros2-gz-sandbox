@@ -104,6 +104,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     )
 
     quadruped_controller_node = Node(
+        namespace=robot_ns,
         package="champ_base",
         executable="quadruped_controller_node",
         output="screen",
@@ -126,6 +127,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
     )
 
     state_estimator_node = Node(
+        namespace=robot_ns,
         package="champ_base",
         executable="state_estimation_node",
         output="screen",
@@ -186,7 +188,6 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         state_estimator_node,
         controller_spawner_js,
         controller_spawner_position,
-        rviz2,
     ]
 
 

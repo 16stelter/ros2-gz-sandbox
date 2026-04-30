@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
-    package_path = get_package_share_directory("ros2_gt_playground")
+    package_path = get_package_share_directory("ros2_gz_sandbox")
 
     world_name = DeclareLaunchArgument("world_name", default_value="mars1", description="Name of the world to load")
 
@@ -60,18 +60,6 @@ def generate_launch_description():
         }.items(),
     )
 
-    spawn_go2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_path, "launch", "spawn_go2.launch.py")
-        ),
-        launch_arguments={
-            "robot_ns": "go2",
-            "x": PythonExpression([LaunchConfiguration("robot_x"), " - 1.0"]),
-            "y": PythonExpression([LaunchConfiguration("robot_y"), " - 1.0"]),
-            "z": LaunchConfiguration("robot_z"),
-        }.items(),
-    )
-
     # Bridge ROS topics and Gazebo messages for establishing communication
     topic_bridge = Node(
         package="ros_gz_bridge",
@@ -103,7 +91,6 @@ def generate_launch_description():
             gz_sim,
             spawn_leo,
             spawn_drone,
-            spawn_go2,
             topic_bridge,
         ]
     )
