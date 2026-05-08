@@ -1,5 +1,3 @@
-import os
-
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, TimerAction, ExecuteProcess
 from launch.launch_context import LaunchContext
@@ -8,10 +6,10 @@ from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterFile
-import xacro
+import xacro, tempfile, yaml, os
 
 
-def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z):
+def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z, ros_control_config):
     robot_ns = context.perform_substitution(namespace)
 
     descr_pkg_share = get_package_share_directory("go2_description")
@@ -22,17 +20,25 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
 
     urdf_path = os.path.join(descr_pkg_share, "urdf", "unitree_go2_robot.xacro")
 
+    with open(ros_control_config) as f:
+        config = f.read()
+    ns_prefix = f"{robot_ns}/" if robot_ns else ""
+    namespaced_config = config.replace("__robot_ns__", ns_prefix)
+    tmp = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.yaml')
+    tmp.write(namespaced_config)
+    tmp.close()
+    namespaced_config_path = tmp.name
+
     robot_desc = xacro.process(
         urdf_path,
-        mappings={"robot_ns": robot_ns},
+        mappings={"robot_ns": robot_ns,
+                  "robot_controllers": namespaced_config_path},
     )
 
     if robot_ns == "":
         robot_gazebo_name = "go2"
-        node_name_prefix = ""
     else:
         robot_gazebo_name = "go2_" + robot_ns
-        node_name_prefix = robot_ns
 
     # Launch robot state publisher node
     robot_state_publisher = Node(
@@ -73,27 +79,20 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         namespace="",
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        name=node_name_prefix + "_parameter_bridge",
+        name=robot_ns + "_parameter_bridge",
         output='screen',
         arguments=[
             # Gazebo to ROS
-            '/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU',
-            '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
-            '/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model',
-            '/velodyne_points/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
-            '/unitree_lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
-            # '/velodyne_points@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-            '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-            '/rgb_image@sensor_msgs/msg/Image@gz.msgs.Image',
-            # D455 RGBD camera bridges
-            '/d455/image@sensor_msgs/msg/Image[gz.msgs.Image',
-            '/d455/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
-            '/d455/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
-            '/d455/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
-
+            robot_ns + '/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU',
+            robot_ns + '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            robot_ns + '/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model',
+            robot_ns + '/velodyne_points/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            robot_ns + '/unitree_lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+            robot_ns + '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+            robot_ns + '/rgb_image@sensor_msgs/msg/Image@gz.msgs.Image',
             # ROS to Gazebo
-            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
-            '/joint_group_position_controller/joint_trajectory@trajectory_msgs/msg/JointTrajectory]gz.msgs.JointTrajectory',
+            robot_ns + '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
+            robot_ns + '/joint_group_position_controller/joint_trajectory@trajectory_msgs/msg/JointTrajectory]gz.msgs.JointTrajectory',
         ],
         parameters=[
             {
@@ -101,6 +100,20 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
                 "use_sim_time": True,
             }
         ],
+    )
+
+    image_bridge = Node(
+        namespace="",
+        package="ros_gz_image",
+        executable="image_bridge",
+        name=robot_ns + "_image_bridge",
+        arguments=[
+            robot_ns + '/d455/image@sensor_msgs/msg/Image[gz.msgs.Image',
+            robot_ns + '/d455/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
+            robot_ns + '/d455/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
+            robot_ns + '/d455/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+        ],
+        output="screen",
     )
 
     quadruped_controller_node = Node(
@@ -123,7 +136,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
             {"publish_foot_contacts": False},
             {"close_loop_odom": True},
         ],
-        remappings=[("/cmd_vel/smooth", "/cmd_vel")],
+        remappings=[("cmd_vel/smooth", "cmd_vel")],
     )
 
     state_estimator_node = Node(
@@ -139,12 +152,15 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
             links_config,
             gait_config,
         ],
+        remappings=[("/tf", "tf"),
+                    ("/tf_static", "tf_static")],
     )
 
     controller_spawner_js = TimerAction(
         period=20.0,
         actions=[
             Node(
+                namespace=robot_ns,
                 package="controller_manager",
                 executable="spawner",
                 output="screen",
@@ -161,6 +177,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         period=30.0,
         actions=[
             Node(
+                namespace=robot_ns,
                 package="controller_manager",
                 executable="spawner",
                 output="screen",
@@ -184,6 +201,7 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z)
         robot_state_publisher,
         go2,
         topic_bridge,
+        image_bridge,
         quadruped_controller_node,
         state_estimator_node,
         controller_spawner_js,
@@ -218,5 +236,5 @@ def generate_launch_description():
     return LaunchDescription([
         name_argument, 
         declare_ros_control_file,
-        OpaqueFunction(function=spawn_robot, args=[namespace, x, y, z])
+        OpaqueFunction(function=spawn_robot, args=[namespace, x, y, z, ros_control_config])
     ])

@@ -51,7 +51,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             'description_file',
-            default_value='go2_description.urdf',
+            default_value='unitree_go2_robot.xacro',
             description='URDF/XACRO description file with the robot.',
         )
     )
