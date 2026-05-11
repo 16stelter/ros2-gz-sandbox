@@ -93,6 +93,9 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z,
             # ROS to Gazebo
             robot_ns + '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
             robot_ns + '/joint_group_position_controller/joint_trajectory@trajectory_msgs/msg/JointTrajectory]gz.msgs.JointTrajectory',
+            # camera
+            robot_ns + '/d455/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
+            robot_ns + '/d455/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
         ],
         parameters=[
             {
@@ -108,10 +111,8 @@ def spawn_robot(context: LaunchContext, namespace: LaunchConfiguration, x, y, z,
         executable="image_bridge",
         name=robot_ns + "_image_bridge",
         arguments=[
-            robot_ns + '/d455/image@sensor_msgs/msg/Image[gz.msgs.Image',
-            robot_ns + '/d455/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
-            robot_ns + '/d455/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
-            robot_ns + '/d455/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            robot_ns + '/d455/image',
+            robot_ns + '/d455/depth_image',
         ],
         output="screen",
     )
